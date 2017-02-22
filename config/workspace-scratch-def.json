@@ -1,0 +1,10 @@
+{
+  "Company": "shane.mclaughlin Company",
+  "Country": "US",
+  "LastName": "shane.mclaughlin",
+  "Email": "shane.mclaughlin@salesforce.com",
+  "Edition": "Developer",
+  "OrgPreferences" : {
+    "S1DesktopEnabled" : true
+  }
+}
