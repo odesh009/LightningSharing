@@ -168,8 +168,8 @@ private class TestLightningSharing {
 
 		u.FirstName = 'A';
 		u.LastName = 'S';
-		u.Email = 'test@test.com';
-		u.Username = 'astest@test.com';
+		u.Email = 'test@testLightningSharing2017.com';
+		u.Username = 'astest@testLightningSharing2017.com';
 		u.Alias = 'astest';
 		u.ProfileId = p.Id;
 		u.TimeZoneSidKey    = 'America/Denver';
@@ -190,10 +190,10 @@ private class TestLightningSharing {
 
 		for (integer i=0; i<numberOfUsers; i++){
 			string x = string.valueOf(i);
-			User u = new User(Alias = 't'+x, Email='standarduser'+x+'@testPBBPermSet.msm',
+			User u = new User(Alias = 't'+x, Email='standarduser'+x+'@testLightningSharing2017.msm',
 				EmailEncodingKey='UTF-8', LastName='Testing' + x, LanguageLocaleKey='en_US',
 				LocaleSidKey='en_US', ProfileId = p.Id,
-				TimeZoneSidKey='America/Los_Angeles', UserName='standarduser'+x+'@testPBBPermSet.msm');
+				TimeZoneSidKey='America/Los_Angeles', UserName='standarduser'+x+'@testLightningSharing2017.msm');
 			users.add(u);
 		}
 
