@@ -1,7 +1,3 @@
-/*
-This is an example of bad testing practice.  I can't guarantee that the core functionaliy runs, since any given org may not have any objects set not on public sharing (defaults have nothing private)
-so I'm scrambling hard for any kind of coverage I can get.
-*/
 @isTest
 private class TestLightningSharing {
 
@@ -10,10 +6,19 @@ private class TestLightningSharing {
   }
 
   static testMethod void testReturning() {
-  	LightningSharing.getReturning('Lead');
-  	LightningSharing.getReturning('User');
-  	LightningSharing.getReturning('Group');
-  	LightningSharing.getReturning('Custom__c');
+
+    string uq = LightningSharing.getReturning('User');
+    system.assertEquals(uq, 'User(Id, Name, UserType WHERE UserType in (\'Standard\', \'PowerCustomerSuccess\', \'PowerPartner\'))');
+
+    uq = LightningSharing.getReturning('Group');
+    system.assertEquals(uq, 'Group(Id, Name, Type)');
+
+    uq = LightningSharing.getReturning('Custom__c');
+    system.assertEquals(uq, 'Custom__c(Id, Name)');
+
+  	uq = LightningSharing.getReturning('Lead');
+    system.assertEquals(uq, 'Lead(Id, Name)');
+
   }
 
   static testMethod void testuserTypes() {
@@ -22,17 +27,24 @@ private class TestLightningSharing {
   	LightningSharing.huh('CustomerSuccess');
   	LightningSharing.huh('CsnOnly');
   	LightningSharing.huh('CSPLitePortal');
-  	LightningSharing.huh('MadeUpStuff');
+  	system.assertEquals('MadeUpStuff', LightningSharing.huh('MadeUpStuff'));
   }
 
   static testMethod void testInnerClass(){
   	LightningSharing.sharingHolder sh = new LightningSharing.sharingHolder();
-  	sh.UserOrGroupName = 'nothing';
-  	sh.SubType = 'nothing';
-  	sh.UserOrGroupType = 'nothing';
-  	sh.UserOrGroupID = 'nothing';
-  	sh.AccessLevel = 'nothing';
-  	sh.RowCause = 'nothing';
+  	sh.UserOrGroupName = 'test';
+  	sh.SubType = 'test';
+  	sh.UserOrGroupType = 'test';
+  	sh.UserOrGroupID = 'test';
+  	sh.AccessLevel = 'test';
+  	sh.RowCause = 'test';
+
+    system.assertEquals(sh.UserOrGroupName, 'test');
+    system.assertEquals(sh.SubType, 'test');
+    system.assertEquals(sh.UserOrGroupType, 'test');
+    system.assertEquals(sh.UserOrGroupID, 'test');
+    system.assertEquals(sh.AccessLevel, 'test');
+    system.assertEquals(sh.RowCause, 'test');
   }
 
   static testMethod void testGetSharings() {
@@ -42,19 +54,43 @@ private class TestLightningSharing {
   	list<Opportunity> o = [select id from Opportunity];
   	LightningSharing.getSharings(l[0].id);
 
+    list<PrivateTestObject__c> ptos = [select id from PrivateTestObject__c];
+    list<ReadOnlyTestObject__c> rotos = [select id from ReadOnlyTestObject__c];
+
+    LightningSharing.getSharings(ptos[0].id);
+    LightningSharing.getSharings(rotos[0].id);
   }
 
   static testMethod void testcanIEditPermsAdmin() {
   	list<lead> l = [select id from lead];
   	LightningSharing.canIEditPerms(l[0].id);
+
+    list<PrivateTestObject__c> ptos = [select id from PrivateTestObject__c];
+    list<ReadOnlyTestObject__c> rotos = [select id from ReadOnlyTestObject__c];
+
+    boolean perm = LightningSharing.canIEditPerms(ptos[0].id);
+    system.assertEquals(perm, true);
+    perm = LightningSharing.canIEditPerms(rotos[0].id);
+    system.assertEquals(perm, true);
+
   }
 
   static testMethod void testcanIEditPermsAdminNonOwner() {
-  	list<lead> l = [select id from lead];
-  	user u = createAdmin();
+    list<PrivateTestObject__c> ptos = [select id from PrivateTestObject__c];
+    list<ReadOnlyTestObject__c> rotos = [select id from ReadOnlyTestObject__c];
+
+    user u = createAdmin();
+    boolean perm1;
+    boolean perm2;
+
   	system.runAs(u){
-  		LightningSharing.canIEditPerms(l[0].id);
+      perm1 =LightningSharing.canIEditPerms(ptos[0].id);
+      perm2 =LightningSharing.canIEditPerms(rotos[0].id);
   	}
+
+    system.assertEquals(perm1, true);
+    system.assertEquals(perm2, true);
+
   }
 
   static testMethod void testDelete() {
@@ -68,8 +104,23 @@ private class TestLightningSharing {
   static testMethod void testUpsertPerm() {
   	list<Opportunity> o = [select id from Opportunity];
   	list<lead> l = [select id from Lead];
+    list<PrivateTestObject__c> ptos = [select id from PrivateTestObject__c];
+    list<ReadOnlyTestObject__c> rotos = [select id from ReadOnlyTestObject__c];
 
   	user u = createUsers(1)[0];
+
+    LightningSharing.upsertPerm(u.id, ptos[0].id, 'Edit');
+    LightningSharing.upsertPerm(u.id, ptos[0].id, 'Read');
+    LightningSharing.upsertPerm(u.id, ptos[0].id, 'Edit');
+
+    LightningSharing.getSharings(ptos[0].id);
+
+    LightningSharing.deletePerm(u.id, ptos[0].id);
+
+
+    LightningSharing.upsertPerm(u.id, rotos[0].id, 'Edit');
+    LightningSharing.getSharings(rotos[0].id);
+    LightningSharing.deletePerm(u.id, rotos[0].id);
 
   	try {
   		LightningSharing.upsertPerm(u.id, o[0].id, 'Edit');
@@ -122,11 +173,55 @@ private class TestLightningSharing {
   }
 
   static testMethod void testcanIEditPermsNonAdmin() {
-  	list<lead> l = [select id from lead];
+  	//list<lead> l = [select id from lead];
+    list<PrivateTestObject__c> ptos = [select id from PrivateTestObject__c];
+    list<ReadOnlyTestObject__c> rotos = [select id from ReadOnlyTestObject__c];
+
   	list<user> users = createUsers(1);
+
+    LightningSharing.upsertPerm(users[0].id, ptos[0].id, 'Edit');
+    LightningSharing.upsertPerm(users[0].id, rotos[0].id, 'Edit');
+
   	System.RunAs(users[0]){
-  		LightningSharing.canIEditPerms(l[0].id);
+
+      //LightningSharing.getSharings(l[0].id);
+      //LightningSharing.getSharings(ptos[0].id);
+      //LightningSharing.getSharings(rotos[0].id);
+
+      //system.assert(LightningSharing.canIEditPerms(l[0].id), false);
+  		system.assertEquals(LightningSharing.canIEditPerms(ptos[0].id), false);
+      system.assertEquals(LightningSharing.canIEditPerms(rotos[0].id), false);
+
   	}
+  }
+
+  static testMethod void testGroupStuff(){
+    list<group> groups = [select id from group where Name = 'the knights who say nee'];
+    list<lead> l = [select id from lead];
+    list<PrivateTestObject__c> ptos = [select id from PrivateTestObject__c];
+    list<ReadOnlyTestObject__c> rotos = [select id from ReadOnlyTestObject__c];
+
+    list<user> users = createUsers(2);
+
+    list<GroupMember> gms = new list<GroupMember>();
+    gms.add(new GroupMember(GroupId=groups[0].id, UserOrGroupId=users[0].id));
+    gms.add(new GroupMember(GroupId=groups[0].id, UserOrGroupId=users[1].id));
+
+    insert gms;
+
+    test.startTest();
+    system.RunAs(createAdmin()){
+
+      //LightningSharing.upsertPerm(groups[0].id, l[0].id, 'Read');
+      LightningSharing.upsertPerm(groups[0].id, ptos[0].id, 'Read');
+      //LightningSharing.upsertPerm(groups[0].id, rotos[0].id, 'Read');
+
+      LightningSharing.getSharings(l[0].id);
+      LightningSharing.getSharings(ptos[0].id);
+      LightningSharing.getSharings(rotos[0].id);
+    }
+    test.stopTest();
+
   }
 
   @testSetup static void makeData(){
@@ -155,6 +250,20 @@ private class TestLightningSharing {
 
     	o.StageName = [select MasterLabel from OpportunityStage where IsClosed = false][0].MasterLabel;
     	insert o;
+
+      PrivateTestObject__c pto = new PrivateTestObject__c();
+      insert pto;
+
+      ReadOnlyTestObject__c roto = new ReadOnlyTestObject__c();
+      insert roto;
+
+      group g = new group();
+      g.Name = 'the knights who say nee';
+      g.Type = 'Regular';
+
+      insert g;
+
+
   }
 
 
