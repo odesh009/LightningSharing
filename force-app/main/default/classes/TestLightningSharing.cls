@@ -94,10 +94,14 @@ private class TestLightningSharing {
   }
 
   static testMethod void testDelete() {
-  	list<lead> l = [select id from Lead];
+
+  	//list<lead> l = [select id from Lead];
+    list<PrivateTestObject__c> ptos = [select Id from PrivateTestObject__c];
   	user u = createUsers(1)[0];
 
-  	LightningSharing.deletePerm(u.id, l[0].id);
+    LightningSharing.upsertPerm(u.id, ptos[0].id, 'Edit');
+
+  	LightningSharing.deletePerm(u.id, ptos[0].id);
   }
 
 

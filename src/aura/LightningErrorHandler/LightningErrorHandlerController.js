@@ -6,6 +6,8 @@
 		//should we skip this event?
 		if (event.getParam("errorComponentName") && (component.get("v.errorHandlerName") !== event.getParam("errorComponentName"))){
 			return;
+		} else {
+			console.log("no skip");
 		}
 		event.stopPropagation();
 		let errors = event.getParam("errors");

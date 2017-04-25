@@ -1,6 +1,15 @@
 ({
 
+	nav : function (recordId) {
+    let navEvt = $A.get("e.force:navigateToSObject");
+    navEvt.setParams({
+      "recordId": recordId
+    });
+    navEvt.fire();
+	},
+
 	reload : function(component) {
+		let helper = this;
 		//get the sobjectType
 		let action = component.get("c.getSharings");
 		action.setParams({
@@ -19,6 +28,7 @@
 					"errors" : a.getError()
 				});
 				appEvent.fire();
+				helper.nav(component.get("v.recordId")); //go back to the original
 			}
 		});
 		$A.enqueueAction(action);
