@@ -301,8 +301,13 @@ global static string getSharings(id recordId){
 
 	@TestVisible
 	private static schema.DescribeSObjectResult getSharingDescribe (id recordId){
-		string sharingName = getSharingTableName(objectTypeFromId(recordId));
-		return Schema.getGlobalDescribe().get(sharingName).getDescribe();
+		try{
+			string sharingName = getSharingTableName(objectTypeFromId(recordId));
+			return Schema.getGlobalDescribe().get(sharingName).getDescribe();
+		} catch (exception e){
+			//probably means they don't have sharing turned on for this object
+			throw new AuraHandledException('There is no sharing table for that object.  Are you SURE you changed the sharing setting to PRIVATE or READ ? ');
+		}
 	}
 
 }
