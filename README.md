@@ -2,7 +2,7 @@
 
 Lightning Components  Apex to implement adhoc sharing in Lightning Experience		  Lightning Components + Apex to implement adhoc sharing in Lightning Experience
 
-<a href="https://githubsfdeploy.herokuapp.com">
+<a href="https://githubsfdeploy.herokuapp.com?owner=odesh009&repo=LightningSharing">
   <img alt="Deploy to Salesforce"
        src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
 </a>
