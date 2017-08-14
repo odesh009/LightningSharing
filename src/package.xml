@@ -10,11 +10,6 @@
   <types>
     <name>ApexClass</name>
     <members>LightningSharing</members>
-    <members>TestLightningSharing</members>
-  </types>
-  <types>
-    <name>QuickAction</name>
-    <members>ReadOnlyTestObject__c.Sharing</members>
   </types>
   <version>39.0</version>
 </Package>
