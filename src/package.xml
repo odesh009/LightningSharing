@@ -13,27 +13,8 @@
     <members>TestLightningSharing</members>
   </types>
   <types>
-    <name>Layout</name>
-    <members>PrivateTestObject__c-PrivateTestObject Layout</members>
-    <members>ReadOnlyTestObject__c-ReadOnlyTestObject Layout</members>
-  </types>
-  <types>
-    <name>CustomObject</name>
-    <members>PrivateTestObject__c</members>
-    <members>ReadOnlyTestObject__c</members>
-  </types>
-  <types>
-    <name>PermissionSet</name>
-    <members>TestingPerms</members>
-  </types>
-  <types>
     <name>QuickAction</name>
     <members>ReadOnlyTestObject__c.Sharing</members>
-  </types>
-  <types>
-    <name>CustomTab</name>
-    <members>PrivateTestObject__c</members>
-    <members>ReadOnlyTestObject__c</members>
   </types>
   <version>39.0</version>
 </Package>
